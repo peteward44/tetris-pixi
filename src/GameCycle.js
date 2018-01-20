@@ -9,6 +9,10 @@ class GameCycle {
 		app.ticker.add( delta => this._tick( delta ) );
 		
 		this._playArea.start();
+		
+		setInterval( () => {
+			this._scoreMeter.add( 100 );
+		}, 10000 );
 	}
 	
 	_tick( delta ) {

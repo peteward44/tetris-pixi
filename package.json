@@ -11,7 +11,8 @@
     "compile": "browserify src/index.js --outfile static/index.js -t babelify --presets es2015 --presets stage-1",
     "dev": "run-p dev-**",
     "dev-js": "watchify --debug src/index.js --outfile static/index.js -t babelify --presets es2015 --presets stage-1",
-    "dev-browsersync": "browser-sync start --server --directory --files static/* --serveStatic static --startPath static/index.html"
+    "dev-browsersync": "browser-sync start --server --directory --files static/* --serveStatic static --startPath static/index.html",
+	"textures": "atlasbuilder\\atlasbuilder.exe --output static\\img\\graphics img/brick_blue.png img/brick_red.png img/brick_green.png img/brick_grey.png img/brick_purple.png img/brick_torq.png img/brick_yellow.png"
   },
   "author": "",
   "license": "ISC",
