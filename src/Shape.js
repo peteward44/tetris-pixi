@@ -27,6 +27,18 @@ class Shape {
 		return this._colour;
 	}
 	
+	get rotation() {
+		return this._rotation;
+	}
+	
+	get nextRotation() {
+		return ( this._rotation + 1 ) % 4;
+	}
+	
+	get type() {
+		return this._type;
+	}
+	
 	get blocks() {
 		return definitions.ROTATIONS[this._type][this._rotation];
 	}
@@ -37,7 +49,7 @@ class Shape {
 		this._speed = 0.05;
 		this._type = type;
 		this._colour = colour;
-		this._y = -_.maxBy( this.blocks, block => block.y ).y;
+		this._y = -_.maxBy( this.blocks, block => block.y ).y - 1;
 		for ( const sprite of this._sprites ) {
 			sprite.visible = false;
 		}
@@ -59,7 +71,7 @@ class Shape {
 	
 	rotate( rotation ) {
 		if ( rotation === undefined ) {
-			rotation = ( this._rotation + 1 ) % 4;
+			rotation = this.nextRotation;
 		}
 		this._rotation = rotation;
 		this._refreshPosition();

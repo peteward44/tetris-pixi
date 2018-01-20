@@ -29,7 +29,7 @@ const KEYS = {
 	RIGHT: "right"
 };
 
-const PLAY_AREA_WIDTH = 30;
+const PLAY_AREA_WIDTH = 10;
 const PLAY_AREA_HEIGHT = 20;
 
 const BLOCK_WIDTH = 20;

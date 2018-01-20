@@ -1,3 +1,4 @@
+import _ from 'lodash';
 import * as PIXI from 'pixi.js';
 import Shape from './Shape.js';
 import textures from './textures.js';
@@ -72,13 +73,31 @@ class PlayArea {
 					this._keys.confirmKey( definitions.KEYS.RIGHT );
 				}
 			} else if ( this._keys.checkKey( definitions.KEYS.UP ) ) {
-				this._droppingShape.rotate();
-				this._keys.confirmKey( definitions.KEYS.UP );
+				if ( this._canRotate() ) {
+					this._droppingShape.rotate();
+					this._keys.confirmKey( definitions.KEYS.UP );
+				}
 			} else {
 				this._droppingShape.fastDrop( this._keys.checkKey( definitions.KEYS.DOWN ) );
 			}
 			this._moveDroppingShapeDownwards( delta );
 		}
+	}
+	
+	_canRotate() {
+		const nextRotationBlocks = definitions.ROTATIONS[this._droppingShape.type][this._droppingShape.nextRotation];
+		// make sure all blocks are within playarea and not in occupied spaces
+		for ( const block of nextRotationBlocks ) {
+			const bx = this._droppingShape.x + block.x;
+			const by = Math.floor( this._droppingShape.y + block.y );
+			if ( bx < 0 || bx >= definitions.PLAY_AREA_WIDTH || by < 0 || by >= definitions.PLAY_AREA_HEIGHT ) {
+				return false;
+			}
+			if ( this._landedBlocks[bx][by] ) {
+				return false;
+			}
+		}
+		return true;
 	}
 
 	_moveDroppingShapeDownwards( delta ) {
@@ -87,26 +106,27 @@ class PlayArea {
 		const newY = Math.floor( this._droppingShape.y );
 		if ( oldY !== newY ) {
 			const hitY = this._collidedWithLandedBlocks( oldY, newY );
-			if ( hitY >= 0 ) {
-				this._droppingShape.landed( hitY );
-				const x = this._droppingShape.x;
-				for ( const block of this._droppingShape.blocks ) {
-					const bx = x + block.x;
-					const by = hitY + block.y;
-					if ( !this._landedBlocks[bx][by] ) {
-						const sprite = new PIXI.Sprite( textures.get( this._droppingShape.colour ) );
-						
-						sprite.position.x = bx * definitions.BLOCK_WIDTH;
-						sprite.position.y = by * definitions.BLOCK_HEIGHT;
-
-						this._container.addChild( sprite );
-						this._landedBlocks[bx][by] = sprite;
-					}
-				}
-				if ( !this._gameFinished() ) {
+			if ( hitY !== null ) {
+				if ( hitY <= 0 ) {
+					// shape has finished landing outside the playarea - game over
+					this.reset();
 					this._newShape();
 				} else {
-					this.reset();
+					this._droppingShape.landed( hitY );
+					const x = this._droppingShape.x;
+					for ( const block of this._droppingShape.blocks ) {
+						const bx = x + block.x;
+						const by = hitY + block.y;
+						if ( !this._landedBlocks[bx][by] ) {
+							const sprite = new PIXI.Sprite( textures.get( this._droppingShape.colour ) );
+							
+							sprite.position.x = bx * definitions.BLOCK_WIDTH;
+							sprite.position.y = by * definitions.BLOCK_HEIGHT;
+
+							this._container.addChild( sprite );
+							this._landedBlocks[bx][by] = sprite;
+						}
+					}
 					this._newShape();
 				}
 			}
@@ -114,30 +134,27 @@ class PlayArea {
 	}
 
 	_collidedWithLandedBlocks( oldY, newY ) {
+		let hitValues = [];
 		const x = this._droppingShape.x;
+		let index = 0;
 		for ( const block of this._droppingShape.blocks ) {
 			const bx = x + block.x;
-			const by1 = Math.ceil( oldY ) + block.y;
-			const by2 = Math.ceil( newY ) + block.y;
+			const by1 = ( oldY >= 0 ? Math.ceil( oldY ) : Math.floor( oldY ) ) + block.y;
+			const by2 = ( newY >= 0 ? Math.ceil( newY ) : Math.floor( newY ) ) + block.y;
 			// check if we passed through a block between traveling between by1 and by2 (in case we traveled more than 1 block's worth in a single frame)
 			for ( let i=by1; i<=by2; ++i ) {
 				const test = i + 1;
-				if ( test >= definitions.PLAY_AREA_HEIGHT || this._landedBlocks[bx][test] ) {
-					return i - block.y;
+				if ( test >= 0 && ( test >= definitions.PLAY_AREA_HEIGHT || this._landedBlocks[bx][test] ) ) {
+					hitValues.push( i - block.y );
 				}
 			}
 		}
-		return -1;
-	}
-
-	_gameFinished() {
-		// if any blocks in the top row are filled, game over
-		for ( let x=0; x<this._landedBlocks.length; ++x ) {
-			if ( this._landedBlocks[x][0] ) {
-				return true;
-			}
+		if ( hitValues.length > 0 ) {
+			hitValues.sort( ( lhs, rhs ) => lhs - rhs );
+			return hitValues[0];
+		} else {
+			return null;
 		}
-		return false;
 	}
 }
 
