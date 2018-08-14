@@ -1,11 +1,12 @@
 import * as PIXI from 'pixi.js';
-import tween from './pixi-tween.js';
 
 class ScoreMeter {
 	constructor( container, app ) {
 		this._container = container;
 		this._score = 0;
-		this._text = new PIXI.Text( '', { fontFamily : 'Arial', fontSize: 24, fill : 0xff1010, align : 'center' } );
+		this._text = new PIXI.Text( '', {
+			fontFamily: 'Arial', fontSize: 24, fill: 0xff1010, align: 'center' 
+		} );
 		this._text.position.x = 100;
 		this._text.position.y = 100;
 		this._text.anchor.x = 0.5;

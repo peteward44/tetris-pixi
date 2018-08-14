@@ -12,7 +12,8 @@
     "dev": "run-p dev-**",
     "dev-js": "watchify --debug src/index.js --outfile static/index.js -t babelify --presets es2015 --presets stage-1",
     "dev-browsersync": "browser-sync start --server --directory --files static/* --serveStatic static --startPath static/index.html",
-	"textures": "atlasbuilder\\atlasbuilder.exe --output static\\img\\graphics img/brick_blue.png img/brick_red.png img/brick_green.png img/brick_grey.png img/brick_purple.png img/brick_torq.png img/brick_yellow.png"
+	"textures": "atlasbuilder\\atlasbuilder.exe --resolution=0.5 --output static\\img\\graphics@0.5x img/brick_blue.png img/brick_red.png img/brick_green.png img/brick_grey.png img/brick_purple.png img/brick_torq.png img/brick_yellow.png",
+	"textures-anim": "atlasbuilder\\atlasbuilder.exe --output static\\img\\anim@1.0x img/anim && atlasbuilder\\atlasbuilder.exe --resolution=0.5 --output static\\img\\anim@0.5x img/anim && atlasbuilder\\atlasbuilder.exe --resolution=0.75 --output static\\img\\anim@0.75x img/anim"
   },
   "author": "",
   "license": "ISC",

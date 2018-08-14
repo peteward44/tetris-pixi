@@ -1,4 +1,3 @@
-import _ from 'lodash';
 import * as PIXI from 'pixi.js';
 import Shape from './Shape.js';
 import textures from './textures.js';
@@ -113,7 +112,7 @@ class PlayArea {
 					this._newShape();
 				} else {
 					this._droppingShape.landed( hitY );
-					const x = this._droppingShape.x;
+					const { x } = this._droppingShape;
 					for ( const block of this._droppingShape.blocks ) {
 						const bx = x + block.x;
 						const by = hitY + block.y;
@@ -135,8 +134,7 @@ class PlayArea {
 
 	_collidedWithLandedBlocks( oldY, newY ) {
 		let hitValues = [];
-		const x = this._droppingShape.x;
-		let index = 0;
+		const { x } = this._droppingShape;
 		for ( const block of this._droppingShape.blocks ) {
 			const bx = x + block.x;
 			const by1 = ( oldY >= 0 ? Math.ceil( oldY ) : Math.floor( oldY ) ) + block.y;
