@@ -1,5 +1,5 @@
 import * as PIXI from 'pixi.js';
-import './pixi-tween.js';
+import { tweenManager } from './pixi-tween.js';
 import textures from './textures.js';
 import GameCycle from './GameCycle.js';
 //import Animation from './Animation.js';
@@ -14,7 +14,7 @@ class Application {
 	async start() {
 		await textures.load();
 		this._app.ticker.add( (delta) => {
-			PIXI.tweenManager.update();
+			tweenManager.update();
 		});
 		this._gameCycle = new GameCycle( this._app.stage, this._app );
 		//		this._animation = new Animation( this._app, this._app.stage, textures.getAnim() );

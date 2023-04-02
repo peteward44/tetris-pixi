@@ -1,4 +1,3 @@
-import 'babel-polyfill';
 import Application from './Application.js';
 
 function onLoad() {

@@ -7,7 +7,7 @@
  * http://www.opensource.org/licenses/mit-license
  */
 
-if (typeof PIXI === 'undefined') { throw 'PixiJS is required'; }
+import * as PIXI from 'pixi.js';
 
 /* eslint-disable no-mixed-operators */
 
@@ -2008,10 +2008,11 @@ let tween = {
 	TweenPath: TweenPath
 };
 
-if (!PIXI.tweenManager) {
-	PIXI.tweenManager = new TweenManager();
+let tweenManager = new TweenManager();
 
-	PIXI.tween = tween;
+export {
+	tweenManager,
+	Tween,
+	Easing,
+	TweenPath
 }
-
-export default tween;

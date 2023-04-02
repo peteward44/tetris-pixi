@@ -1,32 +1,36 @@
 import * as PIXI from 'pixi.js';
+import { Loader } from '@pixi/loaders';
 import definitions from './definitions.js';
 
 const textures = [];
 let anim = [];
 
+async function loadSpritesheet(atlasData) {
+	const spritesheet = new PIXI.Spritesheet(
+		PIXI.BaseTexture.from("img/" + atlasData.meta.image),
+		atlasData
+	);
+	await spritesheet.parse();
+	const frames = spritesheet.textures;
+	textures[definitions.COLOUR.BLUE] = frames["img/brick_blue.png"];
+	textures[definitions.COLOUR.GREEN] = frames["img/brick_green.png"];
+	textures[definitions.COLOUR.GREY] = frames["img/brick_grey.png"];
+	textures[definitions.COLOUR.PURPLE] = frames["img/brick_purple.png"];
+	textures[definitions.COLOUR.RED] = frames["img/brick_red.png"];
+	textures[definitions.COLOUR.TORQ] = frames["img/brick_torq.png"];
+	textures[definitions.COLOUR.YELLOW] = frames["img/brick_yellow.png"];
+}
+
 function load() {
-	return new Promise( (resolve) => {
-		PIXI.loader
-			.add('img/graphics@0.5x.json')
-			.add("img/anim@0.75x.json")
-			.load( () => {
-				const loaded = PIXI.loader.resources["img/graphics@0.5x.json"].textures;
-				textures[definitions.COLOUR.BLUE] = loaded["img/brick_blue.png"];
-				textures[definitions.COLOUR.GREEN] = loaded["img/brick_green.png"];
-				textures[definitions.COLOUR.GREY] = loaded["img/brick_grey.png"];
-				textures[definitions.COLOUR.PURPLE] = loaded["img/brick_purple.png"];
-				textures[definitions.COLOUR.RED] = loaded["img/brick_red.png"];
-				textures[definitions.COLOUR.TORQ] = loaded["img/brick_torq.png"];
-				textures[definitions.COLOUR.YELLOW] = loaded["img/brick_yellow.png"];
-			
-				const obj = PIXI.loader.resources["img/anim@0.75x.json"].textures;
-				const names = Object.keys( obj ).sort();
-				for ( const name of names ) {
-					anim.push( obj[name] );
-				}
-				resolve();
-			} );
-	} );
+	return new Promise((resolve) => {
+		const instance = Loader.shared;
+		instance.add('graphics', 'img/graphics@0.5x.json');
+		
+		instance.load(async (loader, resources) => {
+			await loadSpritesheet(resources.graphics.data);
+			resolve();
+		});
+	});
 }
 
 function get( colour ) {

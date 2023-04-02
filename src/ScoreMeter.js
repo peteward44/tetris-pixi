@@ -1,4 +1,5 @@
 import * as PIXI from 'pixi.js';
+import { Easing, tweenManager } from './pixi-tween.js';
 
 class ScoreMeter {
 	constructor( container, app ) {
@@ -22,11 +23,11 @@ class ScoreMeter {
 	
 	add( points ) {
 		this._score += points;
-		const tween = PIXI.tweenManager.createTween( this._text );
+		const tween = tweenManager.createTween( this._text );
 		tween.from( { scale: { x: 1, y: 1 } } );
 		tween.to( { scale: { x: 3, y: 3 } } );
 		tween.time = 1000;
-		tween.easing = PIXI.tween.Easing.linear();//PIXI.tween.Easing.outBounce();
+		tween.easing = Easing.linear();//Easing.outBounce();
 		tween.start();
 		this._refresh();
 	}
